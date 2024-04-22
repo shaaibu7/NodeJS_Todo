@@ -1,62 +1,19 @@
 const express = require('express');
 const router = express.Router();
-const moment = require('moment');
-const Todo = require('../models/Todo');
+const todo = require('../controller/todo')
 
 
-router.get('/', async (req, res, next) => {
-    try {
-        const todos = await Todo.find({}).sort({ createdAt: -1 });
-        res.locals.moment = moment;
+router.get('/', todo.homeController);
 
-        res.render('index', { title: "List Todo", todos });
-        
-    } catch (error) {
-        res.status(500).json({ message: error.message })
-    }
-})
+router.get('/add-todo', todo.addTodoFormController);
 
-router.get('/add-todo', (req, res, next) => {
-    try {
-        res.render('newTodo', { title: "New Todo" })
-    } catch (error) {
-        res.status(500).json({ message: error.message })
-    }
-})
+router.get('/update-todo', todo.updateTodoFormController);
 
-router.get('/update-todo', (req, res, next) => {
-    try {
-        res.render('updateTodo', { title: "Update Todo" })
-    } catch (error) {
-        res.status(500).json({ message: error.message })
-    }
-})
-
-router.get('/delete-todo', (req, res, next) => {
-    try {
-        res.render('deleteTodo', { title: "Delete Todo" })
-    } catch (error) {
-        res.status(500).json({ message: message.error })
-    }
-})
+router.get('/delete-todo', todo.deleteTodoPageController);
 
 // add todo
 
-router.post('/add-todo', async (req, res, next) => {
-    try {
-        const { title, desc } = req.body;
-
-        if(!title) {
-            return res.status(400).json({ message: "Title is required" });
-        }
-
-        const newTodo = new Todo({ title, desc });
-        await newTodo.save();
-        res.redirect('/');
-    } catch (error) {
-        res.status(500).json({ message: error.message })
-    }
-})
+router.post('/add-todo', todo.addTodoController);
 
 
 module.exports = router;
