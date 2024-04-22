@@ -3,19 +3,14 @@ const mongoose = require('mongoose');
 const { type } = require('os');
 const path = require('path')
 const bodyParser = require('body-parser')
+const moment = require('moment')
+const connectMongodb = require('./init/mongodb');
 
 // application
 const app = express();
 
-const connectionUrl = 'mongodb://localhost:27017/todoDb';
-
-mongoose.connect(connectionUrl)
-    .then(() => {
-        console.log("connection to database successful")
-    })
-    .catch((error) => {
-        console.log(error.message)
-    })
+//mongodb connection
+connectMongodb();
 
     const todoSchema = mongoose.Schema({title: { type: String, required: true }, desc: String}, { timestamps: true })
 
@@ -28,9 +23,13 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use(bodyParser.urlencoded({ extended: true }))
 
 
-app.get('/', (req, res, next) => {
+app.get('/', async (req, res, next) => {
     try {
-        res.render('index', { title: "List Todo" });
+        const todos = await Todo.find({}).sort({ createdAt: -1 });
+        res.locals.moment = moment;
+
+        res.render('index', { title: "List Todo", todos });
+        
     } catch (error) {
         res.status(500).json({ message: error.message })
     }
