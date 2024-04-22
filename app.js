@@ -1,10 +1,10 @@
 const express = require('express')
-const mongoose = require('mongoose');
 const { type } = require('os');
 const path = require('path')
 const bodyParser = require('body-parser')
 const moment = require('moment')
 const connectMongodb = require('./init/mongodb');
+const Todo = require('./models/Todo')
 
 // application
 const app = express();
@@ -12,9 +12,7 @@ const app = express();
 //mongodb connection
 connectMongodb();
 
-    const todoSchema = mongoose.Schema({title: { type: String, required: true }, desc: String}, { timestamps: true })
-
-    const Todo = mongoose.model('todo', todoSchema)
+    
 const PORT = 8000;
 
 //templating engine
